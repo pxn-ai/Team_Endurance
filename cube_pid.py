@@ -16,12 +16,7 @@ def create_camera(frame_size=(320, 240)):
     return picam2
 
 
-def run_cube_pid(
-    ser,
-    frame_size=(320, 240),
-    min_area=800,
-    loop_delay=0.05,
-):
+def run_cube_pid(ser_obj, frame_size=(320, 240), min_area=800, loop_delay=0.05):
     picam2 = create_camera(frame_size=frame_size)
 
     center_x = frame_size[0] // 2
@@ -53,7 +48,7 @@ def run_cube_pid(
                         cube_center_x = x + (w // 2)
                         error = cube_center_x - center_x
                         print(f"Cube found! Error: {error}")
-                        ser.write(f"{error}\n".encode('utf-8'))
+                        ser_obj.write(f"{error}\n".encode('utf-8'))
 
             time.sleep(loop_delay)
 
@@ -61,7 +56,7 @@ def run_cube_pid(
         print("\nStopping...")
     finally:
         picam2.stop()
-        ser.close()
+        ser_obj.close()
 
 
 if __name__ == '__main__':
