@@ -3,73 +3,72 @@
 
 Servo baseServo;
 Servo gripServo;
+Servo camServo;
 
 // ⚠️ Use safe GPIOs for ESP32-S3
 int basePin = 5;
-
 int gripPin = 7;
-
-int cam_servo = 6; // used to rotate the camera (initial heading should be 90 degrees)
+int camPin = 6;
 
 // Positions
 int basePick = 60;
-
 int gripOpen = 90;
 int gripClose = 40;
-
 int baseDrop = 120;
 int armLift = 70;
 
-void cam_left() {
-    cam_servo.write(0);
-}
-
-void cam_right() {
-    cam_servo.write(180);
-}
-
-void cam_front() {
-    cam_servo.write(90);
-}
-
-void setup() {
-  Serial.begin(115200);
+void setup()
+{
+  Serial.begin(115200); // Communicate with Arduino Mega's Serial2
 
   baseServo.attach(basePin);
-
   gripServo.attach(gripPin);
+  camServo.attach(camPin);
 
-  // Initial position
+  // Initial Rest positions
   baseServo.write(90);
-
   gripServo.write(gripOpen);
-
-  delay(2000);
+  camServo.write(90); // Front facing
 }
 
-void loop() {
+void loop()
+{
+  if (Serial.available())
+  {
+    String cmd = Serial.readStringUntil('\n');
+    cmd.trim();
 
-  // Move to pick position
-  baseServo.write(basePick);
-  
-  delay(1000);
-
-  // Close gripper
-  gripServo.write(gripClose);
-  delay(1000);
-
-  
-  // Move to drop
-  baseServo.write(baseDrop);
-  delay(1000);
-
- 
-
-  // Release
-  gripServo.write(gripOpen);
-  delay(1000);
-
-  // Return center
-  baseServo.write(90);
-  delay(1000);
+    if (cmd == "CAM_FRONT")
+    {
+      camServo.write(90);
+    }
+    else if (cmd == "CAM_RIGHT")
+    {
+      camServo.write(180);
+    }
+    else if (cmd == "CAM_LEFT")
+    {
+      camServo.write(0);
+    }
+    else if (cmd == "PICK")
+    {
+      baseServo.write(basePick);
+      delay(1000);
+      gripServo.write(gripClose);
+      delay(1000);
+      baseServo.write(armLift); // Lift so it doesn't drag
+      delay(1000);
+      Serial.println("ARM_DONE");
+    }
+    else if (cmd == "DROP")
+    {
+      baseServo.write(baseDrop);
+      delay(1000);
+      gripServo.write(gripOpen);
+      delay(1000);
+      baseServo.write(90); // Return center
+      delay(1000);
+      Serial.println("ARM_DONE");
+    }
+  }
 }

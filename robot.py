@@ -127,7 +127,7 @@ def task_schedule(uart: MegaUART) -> None:
     uart.set_mode("CUBE_ALIGN")     # Rotate cam to front
 
     # run Cube_pid in a separate thread to continuously send PID error values to the Arduino while moving, so that the main thread can do communication with the Arduino
-    thread = Thread(target=cube_pid.run_cube_pid, args=(uart.port, uart.baudrate))
+    thread = Thread(target=cube_pid.run_cube_pid, args=(uart.ser,))
     thread.start()
 
     # when the cube is nearby, stop the motors and pick up the cube

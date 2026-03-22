@@ -17,13 +17,11 @@ def create_camera(frame_size=(320, 240)):
 
 
 def run_cube_pid(
-    port='/dev/serial0',
-    baudrate=115200,
+    ser,
     frame_size=(320, 240),
     min_area=800,
     loop_delay=0.05,
 ):
-    ser = create_uart(port=port, baudrate=baudrate)
     picam2 = create_camera(frame_size=frame_size)
 
     center_x = frame_size[0] // 2
