@@ -6,8 +6,8 @@ Servo gripServo;
 Servo camServo;
 
 // ⚠️ Use safe GPIOs for ESP32-S3
-int basePin = 5;
-int gripPin = 7;
+int basePin = 4;
+int gripPin = 5;
 int camPin = 6;
 
 // Positions
