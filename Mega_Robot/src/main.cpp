@@ -174,7 +174,7 @@ float lastValidLineError = 0;
 
 void setup()
 {
-  Serial.begin(115200);  // To Raspberry Pi
+  Serial1.begin(115200);  // To Raspberry Pi
   Serial2.begin(115200); // To ESP32
 
   motor.init();
@@ -258,7 +258,7 @@ void parseCommand(String cmd)
     delay(4000);
     if (action == "PICK")
     {
-      Serial.println("ready");
+      Serial1.println("ready");
     }
   }
   else if (currentMode == "CUBE_ALIGN")
@@ -276,9 +276,9 @@ void parseCommand(String cmd)
 void loop()
 {
   // Read from Raspberry Pi
-  while (Serial.available())
+  while (Serial1.available())
   {
-    String line = Serial.readStringUntil('\n');
+    String line = Serial1.readStringUntil('\n');
     parseCommand(line);
   }
 
@@ -305,7 +305,7 @@ void loop()
     if (trackSensor.readRaw() != 0)
     {
       motor.stop();
-      Serial.println("Line found");
+      Serial1.println("Line found");
       currentMode = "IDLE";
     }
     else
@@ -320,7 +320,7 @@ void loop()
     if (errorLine == 888.0f && currentMode == "LINE_FOLLOW")
     {
       motor.stop();
-      Serial.println("Junction found");
+      Serial1.println("Junction found");
       currentMode = "IDLE";
     }
     else if (errorLine < 800.0f)
@@ -343,7 +343,7 @@ void loop()
     if (distFront < 20.0)
     { // e.g. 20cm
       motor.stop();
-      Serial.println("Wall found");
+      Serial1.println("Wall found");
       currentMode = "IDLE";
     }
     else
@@ -369,7 +369,7 @@ void loop()
     if (distFront < 8.0)
     { // Cube is very close
       motor.stop();
-      Serial.println("Cube nearby");
+      Serial1.println("Cube nearby");
       currentMode = "IDLE"; // Let Python initiate ARM PICK
     }
   }
@@ -379,7 +379,7 @@ void loop()
     if (trackSensor.readRaw() != 0)
     {
       motor.stop();
-      Serial.println("Line found");
+      Serial1.println("Line found");
       currentMode = "IDLE";
     }
   }
