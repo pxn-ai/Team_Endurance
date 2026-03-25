@@ -7,8 +7,8 @@
 #define ENB_PIN 5
 #define IN3_PIN 24
 #define IN4_PIN 25
-#define LEFT_ENC_A 18
-#define LEFT_ENC_B 19
+#define LEFT_ENC_A 26
+#define LEFT_ENC_B 27
 #define RIGHT_ENC_A 20
 #define RIGHT_ENC_B 21
 

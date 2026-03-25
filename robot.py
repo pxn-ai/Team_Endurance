@@ -113,13 +113,27 @@ def task_schedule(uart: MegaUART) -> None:
     time.sleep(1.0)
     uart.set_mode("LINE_WITH_CUBE_SEARCH_RIGHT")    # turn camera to right
 
-    # call the cube detection function until it returns True (cube_scan.py)
+    # --- START OF FIX ---
+    # Initialize the camera using the native Pi library
+    scan_cam = Picamera2()
+    config = scan_cam.create_preview_configuration(main={"size": (320, 240)})
+    scan_cam.configure(config)
+    scan_cam.start()
+
+    # call the cube detection function until it returns True
     while True:
-        frame = cv2.VideoCapture(0).read()[1]  # Capture a frame from the camera
-        result = cube_scan.is_red_cube_present(frame)  # You need to capture a frame from the camera
+        # Capture a frame directly as a numpy array
+        frame = scan_cam.capture_array()  
+        result = cube_scan.is_red_cube_present(frame)  
+        
         if result:
             uart.stop()  # Stop the robot when the cube is found
             break
+            
+    # CRITICAL: Free the camera hardware so cube_pid can use it next!
+    scan_cam.stop() 
+    scan_cam.close()
+    # --- END OF FIX ---
     
     # 4. Turn right, switch to CUBE_ALIGN mode, and move forward for 1 second
     uart.turn_right()
